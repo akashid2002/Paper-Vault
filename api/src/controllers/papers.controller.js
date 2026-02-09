@@ -38,7 +38,7 @@ export const getPapers = async (req, res, next) => {
     const { course, semester, subject } = req.query;
 
     // let query = supabase.from("papers").select("*").eq("approved", true);
-    let query = supabase.from("papers").select("*")
+    let query = supabase.from("papers").select("*");
 
     if (course) query = query.eq("course", course);
     if (semester) query = query.eq("semester", semester);
