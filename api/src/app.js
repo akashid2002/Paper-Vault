@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import routes from "./routes/index.js";
-import testRoutes from "./routes/test.routes.js";
 import errorHandler from "./middleware/errorMiddleware.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -14,8 +14,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api", routes);
-
-// app.use("/api/test", testRoutes);
+app.use("/api/admin", adminRoutes);
 
 // error middleware last
 app.use(errorHandler);
