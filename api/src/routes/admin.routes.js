@@ -6,14 +6,33 @@ import {
   deletePaper,
 } from "../controllers/admin.controller.js";
 import adminAuth from "../middleware/adminAuth.middleware.js";
+import { validate } from "../middleware/validate.middleware.js";
+import { adminPapersQuerySchema } from "../validators/admin.validator.js";
+import { paperIdParamSchema } from "../validators/paper.validator.js";
 
 const router = express.Router();
 
 router.use(adminAuth);
 
-router.get("/papers", getAllPapersAdmin);
-router.patch("/papers/:id/approve", approvePaper);
-router.patch("/papers/:id/reject", rejectPaper);
-router.delete("/papers/:id/delete", deletePaper);
+router.get(
+  "/papers",
+  validate(adminPapersQuerySchema, "query"),
+  getAllPapersAdmin,
+);
+router.patch(
+  "/papers/:id/approve",
+  validate(paperIdParamSchema, "params"),
+  approvePaper,
+);
+router.patch(
+  "/papers/:id/reject",
+  validate(paperIdParamSchema, "params"),
+  rejectPaper,
+);
+router.delete(
+  "/papers/:id/delete",
+  validate(paperIdParamSchema, "params"),
+  deletePaper,
+);
 
 export default router;
