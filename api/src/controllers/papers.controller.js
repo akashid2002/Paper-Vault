@@ -27,7 +27,7 @@ export const uploadPaper = async (req, res, next) => {
 
     if (error) throw error;
 
-    res.json({ message: "Paper uploaded successfully 🎉" });
+    res.json({ message: "Paper uploaded successfully." });
   } catch (err) {
     next(err);
   }
@@ -45,6 +45,25 @@ export const getPapers = async (req, res, next) => {
     if (subject) query = query.eq("subject", subject);
 
     const { data, error } = await query;
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get ppaper by ID (for both users and admins, but users will only see approved papers in the list endpoint, so this is mostly for admins or direct access)
+export const getPaperById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("papers")
+      .select("*")
+      .eq("id", id)
+      .single();
 
     if (error) throw error;
 
