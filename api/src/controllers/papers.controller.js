@@ -3,7 +3,7 @@ import { uploadFileToStorage } from "../services/storage.service.js";
 
 export const uploadPaper = async (req, res, next) => {
   try {
-    const { course, semester, subject, exam_session, year } = req.body;
+    const { course, semester, subject, exam_session, year } = req.validatedBody;
 
     if (!req.file) {
       return res.status(400).json({ message: "File is required" });
@@ -35,7 +35,7 @@ export const uploadPaper = async (req, res, next) => {
 
 export const getPapers = async (req, res, next) => {
   try {
-    const { course, semester, subject } = req.query;
+    const { course, semester, subject } = req.validatedQuery;
 
     // let query = supabase.from("papers").select("*").eq("approved", true);
     let query = supabase.from("papers").select("*");

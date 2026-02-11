@@ -41,8 +41,7 @@ export const getAllPapersAdmin = async (req, res, next) => {
 // APPROVE paper
 export const approvePaper = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    console.log("Approving paper with id:", id);
+    const { id } = req.validatedParams;
 
     const { error } = await supabaseAdmin
       .from("papers")
@@ -60,7 +59,7 @@ export const approvePaper = async (req, res, next) => {
 // REJECT paper (soft delete by setting approved to false, or you can choose to hard delete by actually deleting the record)
 export const rejectPaper = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.validatedParams;
 
     const { error } = await supabaseAdmin
       .from("papers")
@@ -78,7 +77,7 @@ export const rejectPaper = async (req, res, next) => {
 // DELETE (delete)
 export const deletePaper = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.validatedParams;
 
     const { error } = await supabaseAdmin.from("papers").delete().eq("id", id);
 
