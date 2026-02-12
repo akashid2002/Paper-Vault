@@ -1,5 +1,9 @@
 import express from "express";
-import { getPapers, uploadPaper } from "../controllers/papers.controller.js";
+import {
+  getPaperById,
+  getPapers,
+  uploadPaper,
+} from "../controllers/papers.controller.js";
 import upload from "../middleware/upload.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
 import { uploadPaperSchema } from "../validators/paper.validator.js";
@@ -14,5 +18,6 @@ router.post(
   validate(uploadPaperSchema),
   uploadPaper,
 );
+router.get("/:id", getPaperById);
 
 export default router;

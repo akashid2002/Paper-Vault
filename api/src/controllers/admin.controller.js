@@ -50,7 +50,7 @@ export const approvePaper = async (req, res, next) => {
 
     if (error) throw error;
 
-    res.json({ message: `Paper with id ${id} approved ✅` });
+    res.json({ message: `Paper with id ${id} approved successfully.` });
   } catch (err) {
     next(err);
   }
@@ -68,7 +68,7 @@ export const rejectPaper = async (req, res, next) => {
 
     if (error) throw error;
 
-    res.json({ message: `Paper with id ${id} rejected ❌` });
+    res.json({ message: `Paper with id ${id} rejected successfully.` });
   } catch (err) {
     next(err);
   }
