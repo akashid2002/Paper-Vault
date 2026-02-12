@@ -1,20 +1,27 @@
-"use client"
+"use client";
 
-import React from "react"
-
-import { useState, useRef } from "react"
-import Link from "next/link"
-import { Upload, FileUp, CheckCircle, Info, X, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React from "react";
+import { useState, useRef } from "react";
+import Link from "next/link";
+import {
+  Upload,
+  FileUp,
+  CheckCircle,
+  Info,
+  X,
+  Plus,
+  Loader2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,48 +29,120 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { courses, semesters, subjects } from "@/lib/data"
+} from "@/components/ui/breadcrumb";
+import { courses, semesters, subjects } from "@/lib/data";
+import { uploadPaper } from "@/lib/api";
+import { toast } from "sonner";
 
 export function UploadForm() {
-  const [course, setCourse] = useState("")
-  const [customCourse, setCustomCourse] = useState("")
-  const [showCustomCourse, setShowCustomCourse] = useState(false)
-  const [semester, setSemester] = useState("")
-  const [subject, setSubject] = useState("")
-  const [customSubject, setCustomSubject] = useState("")
-  const [showCustomSubject, setShowCustomSubject] = useState(false)
-  const [session, setSession] = useState("")
-  const [year, setYear] = useState("")
-  const [file, setFile] = useState<File | null>(null)
-  const [submitted, setSubmitted] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [course, setCourse] = useState("");
+  const [customCourse, setCustomCourse] = useState("");
+  const [showCustomCourse, setShowCustomCourse] = useState(false);
+  const [semester, setSemester] = useState("");
+  const [subject, setSubject] = useState("");
+  const [customSubject, setCustomSubject] = useState("");
+  const [showCustomSubject, setShowCustomSubject] = useState(false);
+  const [session, setSession] = useState("");
+  const [year, setYear] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const activeCourse = showCustomCourse ? customCourse : course
-  const availableSubjects = course && !showCustomCourse ? subjects[course] || [] : []
-  const activeSubject = showCustomSubject ? customSubject : subject
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
+  const activeCourse = showCustomCourse ? customCourse : course;
+  const availableSubjects =
+    course && !showCustomCourse ? subjects[course] || [] : [];
+  const activeSubject = showCustomSubject ? customSubject : subject;
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+
+  const MAX_FILE_SIZE_MB = 5;
+
+  const ALLOWED_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+  ];
+
+  function validateFile(selectedFile: File | null | undefined) {
+    if (!selectedFile) return false;
+
+    if (!ALLOWED_TYPES.includes(selectedFile.type)) {
+      toast.error("Invalid file type", {
+        description: "Only PDF, JPG and PNG files are allowed.",
+      });
+      return false;
+    }
+
+    const fileSizeMB = selectedFile.size / 1024 / 1024;
+
+    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+      toast.error("File too large", {
+        description: "Maximum file size is 10MB.",
+      });
+      return false;
+    }
+
+    return true;
+  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const selected = e.target.files?.[0]
-    if (selected) {
-      setFile(selected)
-    }
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+
+    if (!validateFile(selected)) return;
+
+    setFile(selected);
+    toast.success("File selected", {
+      description: selected.name,
+    });
   }
 
   function handleDrop(e: React.DragEvent) {
-    e.preventDefault()
-    const dropped = e.dataTransfer.files[0]
-    if (dropped) {
-      setFile(dropped)
-    }
+    e.preventDefault();
+    const dropped = e.dataTransfer.files[0];
+    if (!dropped) return;
+
+    if (!validateFile(dropped)) return;
+
+    setFile(dropped);
+
+    toast.success("File selected", {
+      description: dropped.name,
+    });
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setSubmitted(true)
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      const formData = new FormData();
+
+      if (file) formData.append("file", file);
+      formData.append("course", activeCourse);
+      formData.append("semester", semester);
+      formData.append("subject", activeSubject);
+      formData.append("exam_session", session);
+      formData.append("year", year);
+
+      await uploadPaper(formData, (percent: number) => {
+        setUploadProgress(percent);
+      });
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   const isFormValid =
@@ -72,7 +151,8 @@ export function UploadForm() {
     activeSubject &&
     session &&
     year &&
-    file
+    file &&
+    !isUploading;
 
   if (submitted) {
     return (
@@ -90,8 +170,8 @@ export function UploadForm() {
         </p>
         {(showCustomCourse || showCustomSubject) && (
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Since you entered a custom {showCustomCourse ? "course" : "subject"},
-            our team will verify and add it to the platform.
+            Since you entered a custom {showCustomCourse ? "course" : "subject"}
+            , our team will verify and add it to the platform.
           </p>
         )}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -101,24 +181,24 @@ export function UploadForm() {
           <Button
             variant="outline"
             onClick={() => {
-              setSubmitted(false)
-              setCourse("")
-              setCustomCourse("")
-              setShowCustomCourse(false)
-              setSemester("")
-              setSubject("")
-              setCustomSubject("")
-              setShowCustomSubject(false)
-              setSession("")
-              setYear("")
-              setFile(null)
+              setSubmitted(false);
+              setCourse("");
+              setCustomCourse("");
+              setShowCustomCourse(false);
+              setSemester("");
+              setSubject("");
+              setCustomSubject("");
+              setShowCustomSubject(false);
+              setSession("");
+              setYear("");
+              setFile(null);
             }}
           >
             Upload Another
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -170,8 +250,8 @@ export function UploadForm() {
                   size="icon"
                   className="shrink-0"
                   onClick={() => {
-                    setShowCustomCourse(false)
-                    setCustomCourse("")
+                    setShowCustomCourse(false);
+                    setCustomCourse("");
                   }}
                   aria-label="Switch back to course list"
                 >
@@ -183,10 +263,10 @@ export function UploadForm() {
                 <Select
                   value={course}
                   onValueChange={(val) => {
-                    setCourse(val)
-                    setSubject("")
-                    setShowCustomSubject(false)
-                    setCustomSubject("")
+                    setCourse(val);
+                    setSubject("");
+                    setShowCustomSubject(false);
+                    setCustomSubject("");
                   }}
                 >
                   <SelectTrigger id="course" className="mt-1.5">
@@ -204,11 +284,11 @@ export function UploadForm() {
                   type="button"
                   className="mt-1.5 flex items-center gap-1 text-xs text-primary hover:underline"
                   onClick={() => {
-                    setShowCustomCourse(true)
-                    setCourse("")
-                    setSubject("")
-                    setShowCustomSubject(true)
-                    setCustomSubject("")
+                    setShowCustomCourse(true);
+                    setCourse("");
+                    setSubject("");
+                    setShowCustomSubject(true);
+                    setCustomSubject("");
                   }}
                 >
                   <Plus className="h-3 w-3" />
@@ -252,8 +332,8 @@ export function UploadForm() {
                   size="icon"
                   className="shrink-0"
                   onClick={() => {
-                    setShowCustomSubject(false)
-                    setCustomSubject("")
+                    setShowCustomSubject(false);
+                    setCustomSubject("");
                   }}
                   aria-label="Switch back to subject list"
                 >
@@ -279,8 +359,8 @@ export function UploadForm() {
                 type="button"
                 className="mt-1.5 flex items-center gap-1 text-xs text-primary hover:underline"
                 onClick={() => {
-                  setShowCustomSubject(true)
-                  setSubject("")
+                  setShowCustomSubject(true);
+                  setSubject("");
                 }}
               >
                 <Plus className="h-3 w-3" />
@@ -338,7 +418,7 @@ export function UploadForm() {
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ")
-                fileInputRef.current?.click()
+                fileInputRef.current?.click();
             }}
             aria-label="Upload file"
           >
@@ -363,8 +443,8 @@ export function UploadForm() {
                 <button
                   type="button"
                   onClick={(e) => {
-                    e.stopPropagation()
-                    setFile(null)
+                    e.stopPropagation();
+                    setFile(null);
                   }}
                   className="ml-2 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label="Remove file"
@@ -390,12 +470,21 @@ export function UploadForm() {
           type="submit"
           size="lg"
           className="w-full"
-          disabled={!isFormValid}
+          disabled={!isFormValid || isUploading}
         >
-          <Upload className="mr-2 h-4 w-4" />
-          Submit Paper for Review
+          {isUploading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Uploading {uploadProgress}%
+            </>
+          ) : (
+            <>
+              <Upload className="mr-2 h-4 w-4" />
+              Submit Paper for Review
+            </>
+          )}
         </Button>
       </form>
     </div>
-  )
+  );
 }
