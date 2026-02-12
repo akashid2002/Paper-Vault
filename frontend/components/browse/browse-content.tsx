@@ -81,7 +81,7 @@ export function BrowseContent({ papers }: { papers: any[] }) {
 
   const filteredPapers = useMemo(() => {
     return papers
-      .filter((p) => p.approved === true)
+      // .filter((p) => p.approved === true)
       .filter((p) => !course || p.course === course)
       .filter((p) => !semester || p.semester === Number(semester))
       .filter((p) => !subject || p.subject === subject)
@@ -351,7 +351,7 @@ export function BrowseContent({ papers }: { papers: any[] }) {
                   Sem {paper.semester}
                 </span>
                 <span>
-                  {new Date(paper.uploadedAt).toLocaleDateString("en-IN", {
+                  {new Date(paper.created_at).toLocaleDateString("en-IN", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",

@@ -1,10 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Check, X, FileText, Calendar, BookOpen, User, Shield, Eye } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react";
+import {
+  Check,
+  X,
+  FileText,
+  Calendar,
+  BookOpen,
+  User,
+  Shield,
+  Eye,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,23 +21,25 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { mockPapers, type Paper } from "@/lib/data"
+} from "@/components/ui/breadcrumb";
+import { mockPapers, type Paper } from "@/lib/data";
 
 export function AdminDashboard() {
   const [papers, setPapers] = useState<Paper[]>(
-    mockPapers.filter((p) => p.status === "pending")
-  )
-  const [actionLog, setActionLog] = useState<{ id: string; action: "approved" | "rejected" }[]>([])
+    mockPapers.filter((p) => p.status === "pending"),
+  );
+  const [actionLog, setActionLog] = useState<
+    { id: string; action: "approved" | "rejected" }[]
+  >([]);
 
   function handleApprove(id: string) {
-    setPapers((prev) => prev.filter((p) => p.id !== id))
-    setActionLog((prev) => [...prev, { id, action: "approved" }])
+    setPapers((prev) => prev.filter((p) => p.id !== id));
+    setActionLog((prev) => [...prev, { id, action: "approved" }]);
   }
 
   function handleReject(id: string) {
-    setPapers((prev) => prev.filter((p) => p.id !== id))
-    setActionLog((prev) => [...prev, { id, action: "rejected" }])
+    setPapers((prev) => prev.filter((p) => p.id !== id));
+    setActionLog((prev) => [...prev, { id, action: "rejected" }]);
   }
 
   return (
@@ -63,16 +74,22 @@ export function AdminDashboard() {
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border bg-card p-5">
           <span className="text-sm text-muted-foreground">Pending Review</span>
-          <p className="mt-1 text-3xl font-bold text-foreground">{papers.length}</p>
+          <p className="mt-1 text-3xl font-bold text-foreground">
+            {papers.length}
+          </p>
         </div>
         <div className="rounded-xl border bg-card p-5">
-          <span className="text-sm text-muted-foreground">Approved This Session</span>
+          <span className="text-sm text-muted-foreground">
+            Approved This Session
+          </span>
           <p className="mt-1 text-3xl font-bold text-foreground">
             {actionLog.filter((a) => a.action === "approved").length}
           </p>
         </div>
         <div className="rounded-xl border bg-card p-5">
-          <span className="text-sm text-muted-foreground">Rejected This Session</span>
+          <span className="text-sm text-muted-foreground">
+            Rejected This Session
+          </span>
           <p className="mt-1 text-3xl font-bold text-foreground">
             {actionLog.filter((a) => a.action === "rejected").length}
           </p>
@@ -90,7 +107,9 @@ export function AdminDashboard() {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
               <Check className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-foreground">All caught up</h3>
+            <h3 className="mt-4 text-lg font-semibold text-foreground">
+              All caught up
+            </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               No papers pending review right now.
             </p>
@@ -127,11 +146,16 @@ export function AdminDashboard() {
                           {paper.uploadedBy}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(paper.uploadedAt).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                          {paper.created_at
+                            ? new Date(paper.created_at).toLocaleDateString(
+                                "en-IN",
+                                {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )
+                            : "—"}
                         </span>
                       </div>
                     </div>
@@ -144,10 +168,7 @@ export function AdminDashboard() {
                         Preview
                       </Link>
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleApprove(paper.id)}
-                    >
+                    <Button size="sm" onClick={() => handleApprove(paper.id)}>
                       <Check className="mr-1 h-3.5 w-3.5" />
                       Approve
                     </Button>
@@ -167,5 +188,5 @@ export function AdminDashboard() {
         )}
       </div>
     </div>
-  )
+  );
 }

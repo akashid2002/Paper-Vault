@@ -1,14 +1,14 @@
 export type Paper = {
-  id: string
-  subject: string
-  course: string
-  semester: number
-  year: number
-  session: "Winter" | "Summer"
-  uploadedAt: string
-  status: "pending" | "approved" | "rejected"
-  uploadedBy: string
-}
+  id: string;
+  subject: string;
+  course: string;
+  semester: number;
+  year: number;
+  session: "Winter" | "Summer";
+  created_at: string;
+  status: "pending" | "approved" | "rejected";
+  uploadedBy: string;
+};
 
 export const courses = [
   "B.Sc. Computer Science",
@@ -21,9 +21,9 @@ export const courses = [
   "BMS",
   "BAF",
   "BBI",
-]
+];
 
-export const semesters = [1, 2, 3, 4, 5, 6, 7, 8]
+export const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
 export const subjects: Record<string, string[]> = {
   "B.Sc. Computer Science": [
@@ -96,7 +96,7 @@ export const subjects: Record<string, string[]> = {
     "CAD/CAM",
     "Robotics",
   ],
-  "BMS": [
+  BMS: [
     "Business Communication",
     "Principles of Management",
     "Financial Management",
@@ -106,7 +106,7 @@ export const subjects: Record<string, string[]> = {
     "Business Ethics",
     "Operations Research",
   ],
-  "BAF": [
+  BAF: [
     "Financial Accounting",
     "Cost Accounting",
     "Taxation",
@@ -116,7 +116,7 @@ export const subjects: Record<string, string[]> = {
     "Business Law",
     "Economics",
   ],
-  "BBI": [
+  BBI: [
     "Banking Operations",
     "Insurance Operations",
     "Financial Markets",
@@ -126,7 +126,7 @@ export const subjects: Record<string, string[]> = {
     "Business Law",
     "Economics",
   ],
-}
+};
 
 export const mockPapers: Paper[] = [
   {
@@ -136,7 +136,7 @@ export const mockPapers: Paper[] = [
     semester: 3,
     year: 2024,
     session: "Winter",
-    uploadedAt: "2025-01-15",
+    created_at: "2025-01-15",
     status: "approved",
     uploadedBy: "Rahul S.",
   },
@@ -147,7 +147,7 @@ export const mockPapers: Paper[] = [
     semester: 4,
     year: 2024,
     session: "Summer",
-    uploadedAt: "2025-01-12",
+    created_at: "2025-01-12",
     status: "approved",
     uploadedBy: "Priya M.",
   },
@@ -158,7 +158,7 @@ export const mockPapers: Paper[] = [
     semester: 3,
     year: 2024,
     session: "Winter",
-    uploadedAt: "2025-01-10",
+    created_at: "2025-01-10",
     status: "approved",
     uploadedBy: "Amit K.",
   },
@@ -169,7 +169,7 @@ export const mockPapers: Paper[] = [
     semester: 1,
     year: 2024,
     session: "Winter",
-    uploadedAt: "2025-01-08",
+    created_at: "2025-01-08",
     status: "approved",
     uploadedBy: "Sneha R.",
   },
@@ -180,7 +180,7 @@ export const mockPapers: Paper[] = [
     semester: 5,
     year: 2023,
     session: "Winter",
-    uploadedAt: "2024-12-20",
+    created_at: "2024-12-20",
     status: "approved",
     uploadedBy: "Vikram J.",
   },
@@ -191,7 +191,7 @@ export const mockPapers: Paper[] = [
     semester: 2,
     year: 2024,
     session: "Summer",
-    uploadedAt: "2024-12-18",
+    created_at: "2024-12-18",
     status: "approved",
     uploadedBy: "Neha P.",
   },
@@ -202,7 +202,7 @@ export const mockPapers: Paper[] = [
     semester: 2,
     year: 2024,
     session: "Summer",
-    uploadedAt: "2024-12-15",
+    created_at: "2024-12-15",
     status: "approved",
     uploadedBy: "Rohan D.",
   },
@@ -213,7 +213,7 @@ export const mockPapers: Paper[] = [
     semester: 3,
     year: 2023,
     session: "Winter",
-    uploadedAt: "2024-12-10",
+    created_at: "2024-12-10",
     status: "approved",
     uploadedBy: "Kavita S.",
   },
@@ -224,7 +224,7 @@ export const mockPapers: Paper[] = [
     semester: 3,
     year: 2024,
     session: "Winter",
-    uploadedAt: "2025-01-20",
+    created_at: "2025-01-20",
     status: "pending",
     uploadedBy: "Suresh M.",
   },
@@ -235,7 +235,7 @@ export const mockPapers: Paper[] = [
     semester: 7,
     year: 2024,
     session: "Winter",
-    uploadedAt: "2025-01-22",
+    created_at: "2025-01-22",
     status: "pending",
     uploadedBy: "Ananya T.",
   },
@@ -246,7 +246,7 @@ export const mockPapers: Paper[] = [
     semester: 5,
     year: 2024,
     session: "Summer",
-    uploadedAt: "2025-01-18",
+    created_at: "2025-01-18",
     status: "pending",
     uploadedBy: "Deepak R.",
   },
@@ -257,7 +257,7 @@ export const mockPapers: Paper[] = [
     semester: 4,
     year: 2024,
     session: "Summer",
-    uploadedAt: "2025-01-25",
+    created_at: "2025-01-25",
     status: "pending",
     uploadedBy: "Meera K.",
   },
@@ -268,7 +268,7 @@ export const mockPapers: Paper[] = [
     semester: 5,
     year: 2023,
     session: "Summer",
-    uploadedAt: "2024-11-05",
+    created_at: "2024-11-05",
     status: "approved",
     uploadedBy: "Arjun N.",
   },
@@ -279,8 +279,8 @@ export const mockPapers: Paper[] = [
     semester: 4,
     year: 2023,
     session: "Winter",
-    uploadedAt: "2024-10-28",
+    created_at: "2024-10-28",
     status: "approved",
     uploadedBy: "Pooja V.",
   },
-]
+];
