@@ -1,6 +1,9 @@
+import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "sonner";
 
 const _inter = Inter({ subsets: ["latin"] });
@@ -19,14 +22,20 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        {children}
-        <Toaster richColors position="top-right" />
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <main className="flex-1 animate-in fade-in duration-300">
+            {children}
+          </main>
+          <SiteFooter />
+          <Toaster richColors position="top-right" />
+        </div>
       </body>
     </html>
   );

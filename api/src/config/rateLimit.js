@@ -8,7 +8,7 @@ export const globalLimiter = rateLimit({
   legacyHeaders: false,
   message: {
     message: "Too many requests from this IP. Please try again later.",
-  }
+  },
 });
 
 // Upload limiter (strict)
