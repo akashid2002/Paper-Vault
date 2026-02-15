@@ -1,8 +1,21 @@
 import multer from "multer";
 
-// store file in memory (we upload to Supabase after)
 const storage = multer.memoryStorage();
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      cb(new Error("Only PDF, JPG, and PNG files are allowed"));
+    } else {
+      cb(null, true);
+    }
+  },
+});
 
 export default upload;

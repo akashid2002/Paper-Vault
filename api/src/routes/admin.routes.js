@@ -34,5 +34,8 @@ router.delete(
   validate(paperIdParamSchema, "params"),
   deletePaper,
 );
+router.get("/validate", (req, res) => {
+  res.json({ valid: true });
+});
 
 export default router;

@@ -7,7 +7,7 @@ import { Paper } from "@/lib/types/paper";
 
 export function RecentPapers({ papers }: { papers: Paper[] }) {
   const recentPapers = papers
-    .filter((p) => p.approved === true)
+    // .filter((p) => p.approved === true)
     .sort(
       (a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),

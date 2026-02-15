@@ -1,191 +1,129 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Check,
-  X,
-  FileText,
-  Calendar,
-  BookOpen,
-  User,
-  Shield,
-  Eye,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileText, CheckCircle, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { mockPapers, type Paper } from "@/lib/data";
 
 export function AdminDashboard() {
-  const [papers, setPapers] = useState<Paper[]>(
-    mockPapers.filter((p) => p.status === "pending"),
-  );
-  const [actionLog, setActionLog] = useState<
-    { id: string; action: "approved" | "rejected" }[]
-  >([]);
+  const [papers, setPapers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  function handleApprove(id: string) {
-    setPapers((prev) => prev.filter((p) => p.id !== id));
-    setActionLog((prev) => [...prev, { id, action: "approved" }]);
+  async function fetchPapers() {
+    try {
+      const res = await fetch("/api/admin/papers", {
+        cache: "no-store",
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
+      const { data } = await res.json();
+      setPapers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleReject(id: string) {
-    setPapers((prev) => prev.filter((p) => p.id !== id));
-    setActionLog((prev) => [...prev, { id, action: "rejected" }]);
+  useEffect(() => {
+    fetchPapers();
+  }, []);
+
+  const total = papers.length;
+  const pending = papers.filter((p) => !p.approved).length;
+  const approved = papers.filter((p) => p.approved).length;
+
+  const recent = papers
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    )
+    .slice(0, 5);
+
+  if (loading) {
+    return <p>Loading dashboard...</p>;
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 animate-in fade-in duration-300">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Admin Dashboard</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <div className="mt-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-          <Shield className="h-5 w-5 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Admin Dashboard
-          </h1>
-          <p className="text-muted-foreground">
-            Review and moderate uploaded question papers.
-          </p>
-        </div>
+    <div className="space-y-8">
+      {/* Page Title */}
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">Overview of platform activity.</p>
       </div>
 
-      {/* Stats bar */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border bg-card p-5">
-          <span className="text-sm text-muted-foreground">Pending Review</span>
-          <p className="mt-1 text-3xl font-bold text-foreground">
-            {papers.length}
-          </p>
-        </div>
-        <div className="rounded-xl border bg-card p-5">
-          <span className="text-sm text-muted-foreground">
-            Approved This Session
-          </span>
-          <p className="mt-1 text-3xl font-bold text-foreground">
-            {actionLog.filter((a) => a.action === "approved").length}
-          </p>
-        </div>
-        <div className="rounded-xl border bg-card p-5">
-          <span className="text-sm text-muted-foreground">
-            Rejected This Session
-          </span>
-          <p className="mt-1 text-3xl font-bold text-foreground">
-            {actionLog.filter((a) => a.action === "rejected").length}
-          </p>
-        </div>
-      </div>
-
-      {/* Pending papers */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">
-          Papers Awaiting Approval
-        </h2>
-
-        {papers.length === 0 ? (
-          <div className="mt-8 flex flex-col items-center justify-center rounded-xl border bg-card py-16 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <Check className="h-8 w-8 text-muted-foreground" />
+      {/* Stats */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="rounded-xl border bg-card p-6">
+          <div className="flex items-center gap-3">
+            <FileText className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-sm text-muted-foreground">Total Papers</p>
+              <p className="text-2xl font-bold">{total}</p>
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-foreground">
-              All caught up
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              No papers pending review right now.
-            </p>
           </div>
-        ) : (
-          <div className="mt-4 space-y-4">
-            {papers.map((paper) => (
+        </div>
+
+        <div className="rounded-xl border bg-card p-6">
+          <div className="flex items-center gap-3">
+            <Clock className="h-6 w-6 text-yellow-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Pending</p>
+              <p className="text-2xl font-bold">{pending}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border bg-card p-6">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-6 w-6 text-green-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Approved</p>
+              <p className="text-2xl font-bold">{approved}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Papers */}
+      <div className="rounded-xl border bg-card p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Recently Uploaded Papers</h2>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/admin/papers">
+              Manage All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+
+        <div className="mt-6 space-y-4">
+          {recent.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              No papers available.
+            </p>
+          ) : (
+            recent.map((paper) => (
               <div
                 key={paper.id}
-                className="rounded-xl border bg-card p-5 transition-all hover:shadow-sm"
+                className="flex items-center justify-between rounded-lg border p-4"
               >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-accent/20">
-                      <FileText className="h-6 w-6 text-accent-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">
-                        {paper.subject}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {paper.course}
-                      </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <Badge variant="secondary">
-                          <Calendar className="mr-1 h-3 w-3" />
-                          Sem {paper.semester}
-                        </Badge>
-                        <Badge variant="secondary">
-                          {paper.session} {paper.year}
-                        </Badge>
-                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <User className="h-3 w-3" />
-                          {paper.uploadedBy}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {paper.created_at
-                            ? new Date(paper.created_at).toLocaleDateString(
-                                "en-IN",
-                                {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )
-                            : "—"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 sm:shrink-0">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/paper/${paper.id}`}>
-                        <Eye className="mr-1 h-3.5 w-3.5" />
-                        Preview
-                      </Link>
-                    </Button>
-                    <Button size="sm" onClick={() => handleApprove(paper.id)}>
-                      <Check className="mr-1 h-3.5 w-3.5" />
-                      Approve
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleReject(paper.id)}
-                    >
-                      <X className="mr-1 h-3.5 w-3.5" />
-                      Reject
-                    </Button>
-                  </div>
+                <div>
+                  <p className="font-medium">{paper.subject}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {paper.course} | Sem {paper.semester}
+                  </p>
                 </div>
+
+                <Badge variant={paper.approved ? "default" : "secondary"}>
+                  {paper.approved ? "Approved" : "Pending"}
+                </Badge>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

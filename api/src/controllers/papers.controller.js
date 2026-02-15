@@ -1,5 +1,6 @@
 import supabase from "../config/supabaseClient.js";
 import { uploadFileToStorage } from "../services/storage.service.js";
+import { v4 as uuidv4 } from "uuid";
 
 export const uploadPaper = async (req, res, next) => {
   try {
@@ -9,8 +10,27 @@ export const uploadPaper = async (req, res, next) => {
       return res.status(400).json({ message: "File is required" });
     }
 
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({
+        message: "Only PDF, JPG and PNG files are allowed",
+      });
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+
+    if (req.file.size > maxSize) {
+      return res.status(400).json({
+        message: "File size must be less than 5MB",
+      });
+    }
+
+    const extension = req.file.originalname.split(".").pop();
+    const safeFileName = `${Date.now()}-${uuidv4()}.${extension}`;
+
     // upload file to storage
-    const fileUrl = await uploadFileToStorage(req.file);
+    const fileUrl = await uploadFileToStorage(req.file, safeFileName);
 
     // save metadata in DB
     const { data, error } = await supabase.from("papers").insert([

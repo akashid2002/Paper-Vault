@@ -8,6 +8,7 @@ import upload from "../middleware/upload.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
 import { uploadPaperSchema } from "../validators/paper.validator.js";
 import { papersQuerySchema } from "../validators/query.validator.js";
+import { uploadLimiter } from "../config/rateLimit.js";
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.post(
   "/",
   upload.single("file"),
   validate(uploadPaperSchema),
+  uploadLimiter,
   uploadPaper,
 );
 router.get("/:id", getPaperById);
