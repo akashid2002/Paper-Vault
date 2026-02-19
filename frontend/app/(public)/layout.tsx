@@ -9,7 +9,7 @@ import { Toaster } from "sonner";
 const _inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PaperVault - Exam Question Papers",
+  title: "PYQPapers - Exam Question Papers",
   description:
     "Find and share previous year exam question papers. Browse by course, semester and subject. A community-driven platform for students.",
 };

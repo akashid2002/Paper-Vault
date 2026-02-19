@@ -3,8 +3,8 @@ import { Upload, Users, FileText, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const stats = [
-  { label: "Papers Uploaded", value: "2,500+", icon: FileText },
-  { label: "Active Students", value: "10,000+", icon: Users },
+  { label: "Papers Uploaded", value: "25+", icon: FileText },
+  // { label: "Active Students", value: "10,000+", icon: Users },
   { label: "Courses Covered", value: "30+", icon: TrendingUp },
 ]
 
@@ -32,7 +32,7 @@ export function UploadCTA() {
             </Button>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {stats.map((stat) => {
               const Icon = stat.icon
               return (

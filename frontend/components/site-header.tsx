@@ -26,7 +26,7 @@ export function SiteHeader() {
             <FileText className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="text-xl font-bold tracking-tight text-foreground">
-            PaperVault
+            PYQPapers
           </span>
         </Link>
 

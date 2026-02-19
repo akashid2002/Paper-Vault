@@ -1,7 +1,7 @@
 import { AdminDashboard } from "@/components/admin/admin-dashboard"
 
 export const metadata = {
-  title: "Admin Dashboard - PaperVault",
+  title: "Admin Dashboard - PYQPapers",
   description: "Review and moderate uploaded question papers.",
 }
 
