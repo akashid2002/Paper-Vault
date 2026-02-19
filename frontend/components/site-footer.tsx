@@ -9,7 +9,7 @@ export function SiteFooter() {
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
             <FileText className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-sm font-semibold text-foreground">PaperVault</span>
+          <span className="text-sm font-semibold text-foreground">PYQPapers</span>
         </div>
         <p className="text-center text-sm text-muted-foreground">
           A community-driven platform by students, for students.

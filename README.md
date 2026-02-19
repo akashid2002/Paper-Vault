@@ -1,4 +1,4 @@
-# PaperVault
+# PYQPapers
 
 Community platform for students to upload and access previous year question papers.
 
