@@ -79,9 +79,38 @@ export const deletePaper = async (req, res, next) => {
   try {
     const { id } = req.validatedParams;
 
-    const { error } = await supabaseAdmin.from("papers").delete().eq("id", id);
+    const { data: paper, error: fetchError } = await supabaseAdmin
+      .from("papers")
+      .select("file_url")
+      .eq("id", id)
+      .single();
 
-    if (error) throw error;
+    if (fetchError || !paper) {
+      return res.status(404).json({ message: "Paper not found" });
+    }
+
+    const filePath = paper.file_url.split(
+      "/storage/v1/object/public/papers/",
+    )[1];
+
+    if (filePath) {
+      const { error: storageError } = await supabaseAdmin.storage
+        .from("papers")
+        .remove([filePath]);
+
+      if (storageError) {
+        return res.status(500).json({
+          message: "Failed to delete file from storage",
+        });
+      }
+    }
+
+    const { error: deleteError } = await supabaseAdmin
+      .from("papers")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) throw deleteError;
 
     res.json({ message: `Paper with id ${id} deleted` });
   } catch (err) {

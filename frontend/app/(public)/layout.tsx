@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { Toaster } from "sonner";
+import { ToasterProvider } from "@/components/toaster-provider";
 
 const _inter = Inter({ subsets: ["latin"] });
 
@@ -34,7 +34,7 @@ export default function RootLayout({
             {children}
           </main>
           <SiteFooter />
-          <Toaster richColors position="top-right" />
+          <ToasterProvider />
         </div>
       </body>
     </html>
